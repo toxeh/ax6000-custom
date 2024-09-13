@@ -2,26 +2,19 @@
 
 [ -e "/tmp/set-overlay.log" ] && return 0
 
-if [ ! -d "/data/overlay" ]; then
-    mkdir /data/overlay
-fi
-
-if [ ! -d "/data/overlay/upper" ]; then
-    mkdir /data/overlay/upper
-fi
-
-if [ ! -d "/data/overlay/work" ]; then
-    mkdir /data/overlay/work
-fi
-
 . /lib/functions/preinit.sh
+
+[ -e /data/overlay ] || mkdir /data/overlay
+[ -e /data/overlay/upper ] || mkdir /data/overlay/upper
+[ -e /data/overlay/work ] || mkdir /data/overlay/work
 
 mount --bind /data/overlay /overlay
 fopivot /overlay/upper /overlay/work /rom 1
 
-mount -o noatime,move /rom/data /data >/dev/null 2>&1
-mount -o noatime,move /rom/ini /ini >/dev/null 2>&1
-mount -o noatime,move /rom/etc /etc >/dev/null 2>&1
-mount -o noatime,move /rom/userdisk /userdisk >/dev/null 2>&1
+#Fixup miwifi misc, and DO NOT use /overlay/upper/etc instead, /etc/uci-defaults/* may be already removed
+/bin/mount -o noatime,move /rom/data /data 2>&-
+/bin/mount -o noatime,move /rom/etc /etc 2>&-
+/bin/mount -o noatime,move /rom/ini /ini 2>&-
+/bin/mount -o noatime,move /rom/userdisk /userdisk 2>&-
 
 d=$(date) ; echo "overlay enabled $d" >> /tmp/set-overlay.log

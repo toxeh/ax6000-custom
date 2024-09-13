@@ -12,6 +12,7 @@ nvram commit
 
 /etc/init.d/dropbear enable
 /etc/init.d/dropbear start
-/etc/init.d/tpws restart
+/etc/init.d/tpws enable
+/etc/init.d/tpws start
 
 d=$(date) ; echo "all-to-cron $d" >> /tmp/all-to-cron.log
