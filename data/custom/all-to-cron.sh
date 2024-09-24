@@ -2,17 +2,14 @@
 
 [ -e "/tmp/all-to-cron.log" ] && return 0
 
-/data/custom/set-overlay.sh
-/data/custom/copy-root.sh
+. /data/custom/common/custom_funcs.sh
 
-. /lib/functions/preinit.sh
+mount_overlay
 
-nvram set ssh_en=1
-nvram commit
+copy_root
 
-/etc/init.d/dropbear enable
-/etc/init.d/dropbear start
-/etc/init.d/tpws enable
-/etc/init.d/tpws start
+start_ssh
+
+update_zapret_rules
 
 d=$(date) ; echo "all-to-cron $d" >> /tmp/all-to-cron.log

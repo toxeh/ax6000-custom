@@ -1,8 +1,10 @@
 #!/bin/sh
+. /data/custom/settings
+. /data/custom/zapret/conf/zapret.conf
 
-. /etc/zapret/nfqws.conf
+ARCH=$(uname -m)
 
-NFQWS_BIN=/usr/bin/nfqws
+NFQWS_BIN=/data/custom/zapret/bin/$ARCH/nfqws
 
 is_running() {
   PID_RUNNING=$(pgrep -nx "$NFQWS_BIN" 2>/dev/null)
@@ -41,7 +43,7 @@ start() {
   if [ "$LOG_LEVEL" -eq "1" ]; then
     LOGGING="--debug=syslog"
   fi
-  $NFQWS_BIN --daemon $LOGGING --user=nobody --qnum=$NFQUEUE_NUM --pidfile=$PIDFILE $NFQWS_ARGS $NFQWS_EXTRA_ARGS
+  $NFQWS_BIN --daemon $LOGGING --user=nobody --qnum=$NFQUEUE_NUM --pidfile=$PIDFILE $NFQWS_ARGS $EXTRA_ARGS
 
   firewall_start_v4
   firewall_start_v6

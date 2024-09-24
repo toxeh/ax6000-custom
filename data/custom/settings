@@ -1,0 +1,10 @@
+# 1 or blank
+CUSTOM_SSH=1
+ZAPRET_PROVIDER=quartztelecom
+
+IPV6_ENABLED=0
+# NFQWS Provider network interface for ax6000 2.5G port
+ISP_INTERFACE="eth1"
+# TPSW Local network interface for ax6000
+LOCAL_INTERFACE="br-lan"
+
