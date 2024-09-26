@@ -33,6 +33,7 @@ start_ssh() {
 
       /etc/init.d/dropbear enable
       /etc/init.d/dropbear start
+      d=$(date) ; echo "start dropbear $d" >> /tmp/set-custom.log
   fi
 }
 
@@ -45,13 +46,14 @@ update_zapret_rules() {
 
   curl -L -O https://github.com/toxeh/ax6000-custom/blob/${ZAPRET_PROVIDER}/data/custom/zapret/zapret.conf
 
-  grep -m1 'CUSTOM_ZAPRET=' /tmp/zapret_conf/zapret.conf >/dev/null 2>&- && mv /tmp/zapret_conf/zapret.conf /data/custom/conf/zapret.conf >/dev/null 2>&-
+  grep -m1 'CUSTOM_ZAPRET=' /tmp/zapret_conf/zapret.conf >/dev/null 2>&- && mv /tmp/zapret_conf/zapret.conf /data/custom/zapret/conf/zapret.conf >/dev/null 2>&-
+  d=$(date) ; echo "update zapret rules $d" >> /tmp/set-custom.log
   restart_zapret
 }
 
 restart_zapret() {
 
-. /data/custom/conf/zapret.conf
+. /data/custom/zapret/conf/zapret.conf
 
   /etc/init.d/nfqws stop
   /etc/init.d/tpws stop
@@ -61,4 +63,5 @@ restart_zapret() {
   elif [[ "$CUSTOM_ZAPRET" == "NFQWS" ]]; then
       /etc/init.d/nfqws start
   fi
+  d=$(date) ; echo "restart zapret $d" >> /tmp/set-custom.log
 }

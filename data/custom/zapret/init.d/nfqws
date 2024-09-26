@@ -2,8 +2,6 @@
 . /data/custom/settings
 . /data/custom/zapret/conf/zapret.conf
 
-ARCH=$(uname -m)
-
 NFQWS_BIN=/data/custom/zapret/bin/$ARCH/nfqws
 
 is_running() {

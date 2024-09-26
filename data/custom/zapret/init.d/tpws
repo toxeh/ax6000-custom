@@ -5,8 +5,6 @@ VERSION="1.1.0"
 . /data/custom/settings
 . /data/custom/zapret/conf/zapret.conf
 
-ARCH=$(uname -m)
-
 TPWS_BIN=/data/custom/zapret/bin/$ARCH/tpws
 
 is_running() {
@@ -87,7 +85,7 @@ firewall_start_v4() {
         iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
       fi
       iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      if [ "QUIC_ENABLED" -eq "1" ]; then
+      if [ "$QUIC_ENABLED" -eq "1" ]; then
         iptables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
       fi
     done
@@ -101,7 +99,7 @@ firewall_stop_v4() {
         iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
       fi
       iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      if [ "QUIC_ENABLED" -eq "1" ]; then
+      if [ "$QUIC_ENABLED" -eq "1" ]; then
         iptables -t nat -D PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
       fi
     done

@@ -1,6 +1,7 @@
 # 1 or blank
 CUSTOM_SSH=1
 ZAPRET_PROVIDER=quartztelecom
+ARCH=aarch64
 
 IPV6_ENABLED=0
 # NFQWS Provider network interface for ax6000 2.5G port
