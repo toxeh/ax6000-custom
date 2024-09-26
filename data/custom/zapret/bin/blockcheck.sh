@@ -2,8 +2,11 @@
 
 EXEDIR="$(dirname "$0")"
 EXEDIR="$(cd "$EXEDIR"; pwd)"
-ZAPRET_CONFIG="/etc/nfqws/nfqws.conf"
+ZAPRET_CONFIG="/data/custom/zapret/conf/zapret.conf"
 ZAPRET_BASE="/data/custom/zapret"
+
+. /data/custom/settings
+
 
 [ -f "$ZAPRET_CONFIG" ] || {
 	[ -f "${ZAPRET_CONFIG}.default" ] && cp "${ZAPRET_CONFIG}.default" "$ZAPRET_CONFIG"
@@ -19,11 +22,11 @@ QNUM=${QNUM:-59780}
 SOCKS_PORT=${SOCKS_PORT:-1993}
 TPWS_UID=${TPWS_UID:-1}
 TPWS_GID=${TPWS_GID:-3003}
-NFQWS=/usr/bin/nfqws
+NFQWS=${ZAPRET_BASE}/bin/$ARCH/nfqws
 DVTWS=${DVTWS:-${ZAPRET_BASE}/nfq/dvtws}
 WINWS=${WINWS:-${ZAPRET_BASE}/nfq/winws}
-TPWS=/usr/bin/tpws
-MDIG=/usr/bin/mdig
+TPWS=${ZAPRET_BASE}/bin/$ARCH/tpws
+MDIG=${ZAPRET_BASE}/bin/$ARCH/mdig
 DESYNC_MARK=0x10000000
 IPFW_RULE_NUM=${IPFW_RULE_NUM:-1}
 IPFW_DIVERT_PORT=${IPFW_DIVERT_PORT:-59780}
