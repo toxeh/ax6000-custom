@@ -87,9 +87,9 @@ firewall_start_v4() {
       iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
       if [ "$QUIC_ENABLED" -eq "1" ]; then
         iptables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      else
-        iptables -A INPUT -p udp -m multiport --dports 80,443 -j DROP
-        iptables -A OUTPUT -p udp -m multiport --dports 80,443 -j DROP
+#      else
+#        iptables -A INPUT -p udp -m multiport --dports 80,443 -j DROP
+#        iptables -A OUTPUT -p udp -m multiport --dports 80,443 -j DROP
       fi
     done
   fi
@@ -104,9 +104,9 @@ firewall_stop_v4() {
       iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
       if [ "$QUIC_ENABLED" -eq "1" ]; then
         iptables -t nat -D PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      else
-        iptables -D INPUT -p udp -m multiport --dports 80,443 -j DROP
-        iptables -D OUTPUT -p udp -m multiport --dports 80,443 -j DROP
+#      else
+#        iptables -D INPUT -p udp -m multiport --dports 80,443 -j DROP
+#        iptables -D OUTPUT -p udp -m multiport --dports 80,443 -j DROP
       fi
     done
   fi
