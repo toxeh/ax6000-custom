@@ -45,7 +45,7 @@ update_zapret_rules() {
   cd /tmp/zapret_conf
   rm ./zapret.conf >/dev/null 2>&- &&
 
-  curl -L -O https://github.com/toxeh/ax6000-custom/blob/${ZAPRET_PROVIDER}/data/custom/zapret/zapret.conf
+  curl -L -O https://github.com/toxeh/ax6000-custom/blob/${ZAPRET_PROVIDER}/data/custom/zapret/conf/zapret.conf
 
   grep -m1 'CUSTOM_ZAPRET=' /tmp/zapret_conf/zapret.conf >/dev/null 2>&- && mv /tmp/zapret_conf/zapret.conf /data/custom/zapret/conf/zapret.conf >/dev/null 2>&-
   d=$(date) ; echo "update zapret rules $d" >> /tmp/set-custom.log
