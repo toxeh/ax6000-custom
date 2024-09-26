@@ -1,4 +1,4 @@
-#!/bin/sh
+
 
 mount_overlay() {
 
@@ -39,18 +39,18 @@ start_ssh() {
 
 update_zapret_rules() {
   . /data/custom/settings
-. /data/custom/zapret/conf/zapret.conf
+  . /data/custom/zapret/conf/zapret.conf
 
   mkdir /tmp/zapret_conf
   cd /tmp/zapret_conf
   rm ./zapret.conf >/dev/null 2>&- &&
-
-  curl -L -O https://github.com/toxeh/ax6000-custom/blob/${ZAPRET_PROVIDER}/data/custom/zapret/conf/zapret.conf
+  echo get config for ${ZAPRET_PROVIDER}
+  curl -L -O https://raw.githubusercontent.com/toxeh/ax6000-custom/refs/heads/${ZAPRET_PROVIDER}/data/custom/zapret/conf/zapret.conf
 
   grep -m1 'CUSTOM_ZAPRET=' /tmp/zapret_conf/zapret.conf >/dev/null 2>&- && mv /tmp/zapret_conf/zapret.conf /data/custom/zapret/conf/zapret.conf >/dev/null 2>&-
   d=$(date) ; echo "update zapret rules $d" >> /tmp/set-custom.log
   cd /tmp
-  rm -rf /tmp/zapret_conf
+  #rm -rf /tmp/zapret_conf
   restart_zapret
 }
 
@@ -59,7 +59,7 @@ restart_zapret() {
   /data/custom/zapret/init.d/nfqws stop
   /data/custom/zapret/init.d/tpws stop
 
-. /data/custom/zapret/conf/zapret.conf
+  . /data/custom/zapret/conf/zapret.conf
 
 
   if [[ "$CUSTOM_ZAPRET" == "TPWS" ]]; then
@@ -69,3 +69,4 @@ restart_zapret() {
   fi
   d=$(date) ; echo "restart zapret $d" >> /tmp/set-custom.log
 }
+
