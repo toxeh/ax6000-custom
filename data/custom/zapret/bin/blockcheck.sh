@@ -7,6 +7,23 @@ ZAPRET_BASE="/data/custom/zapret"
 
 . /data/custom/settings
 
+FWTYPE=iptables
+SET_MAXELEM=522288
+IPSET_OPT="hashsize 262144 maxelem $SET_MAXELEM"
+IP2NET_OPT4="--prefix-length=22-30 --v4-threshold=3/4"
+IP2NET_OPT6="--prefix-length=56-64 --v6-threshold=5"
+MODE=tpws
+# apply fooling to http
+MODE_HTTP=${HTTP_ENABLED}
+# for nfqws only. support http keep alives. enable only if DPI checks for http request in any outgoing packet
+MODE_HTTP_KEEPALIVE=0
+# apply fooling to https
+MODE_HTTPS=1
+MODE_QUIC=${QUIC_ENABLED}
+FLOWOFFLOAD=donttouch
+DISABLE_IPV6=1
+IFACE_LAN=${LOCAL_INTERFACE}
+IFACE_WAN=${ISP_INTERFACE}
 
 [ -f "$ZAPRET_CONFIG" ] || {
 	[ -f "${ZAPRET_CONFIG}.default" ] && cp "${ZAPRET_CONFIG}.default" "$ZAPRET_CONFIG"
@@ -30,7 +47,7 @@ MDIG=${ZAPRET_BASE}/bin/$ARCH/mdig
 DESYNC_MARK=0x10000000
 IPFW_RULE_NUM=${IPFW_RULE_NUM:-1}
 IPFW_DIVERT_PORT=${IPFW_DIVERT_PORT:-59780}
-DOMAINS=${DOMAINS:-youtube.com}
+DOMAINS=${DOMAINS:-rr16---sn-n8v7znze.googlevideo.com youtube.com}
 CURL_MAX_TIME=${CURL_MAX_TIME:-2}
 CURL_MAX_TIME_QUIC=${CURL_MAX_TIME_QUIC:-$CURL_MAX_TIME}
 MIN_TTL=${MIN_TTL:-1}
@@ -47,7 +64,7 @@ HDRTEMP=/tmp/zapret-hdr.txt
 NFT_TABLE=blockcheck
 
 DNSCHECK_DNS=${DNSCHECK_DNS:-8.8.8.8 1.1.1.1 77.88.8.1}
-DNSCHECK_DOM=${DNSCHECK_DOM:-pornhub.com putinhuylo.com rutracker.org www.torproject.org bbc.com youtube.com}
+DNSCHECK_DOM=${DNSCHECK_DOM:-pornhub.com rutracker.org www.torproject.org bbc.com youtube.com}
 DNSCHECK_DIG1=/tmp/dig1.txt
 DNSCHECK_DIG2=/tmp/dig2.txt
 DNSCHECK_DIGS=/tmp/digs.txt
@@ -1515,53 +1532,53 @@ ask_params()
 
 	configure_curl_opt
 
-	ENABLE_HTTP=1
+	ENABLE_HTTP=0
 	echo
 	ask_yes_no_var ENABLE_HTTP "check http"
 
 	ENABLE_HTTPS_TLS12=1
-	echo
-	ask_yes_no_var ENABLE_HTTPS_TLS12 "check https tls 1.2"
+	#echo
+	#ask_yes_no_var ENABLE_HTTPS_TLS12 "check https tls 1.2"
 
 	ENABLE_HTTPS_TLS13=0
-	echo
-	if [ -n "$TLS13" ]; then
-		echo "TLS 1.3 uses encrypted ServerHello. DPI cannot check domain name in server response."
-		echo "This can allow more bypass strategies to work."
-		echo "What works for TLS 1.2 will also work for TLS 1.3 but not vice versa."
-		echo "Most sites nowadays support TLS 1.3 but not all. If you can't find a strategy for TLS 1.2 use this test."
-		echo "TLS 1.3 only strategy is better than nothing."
-		ask_yes_no_var ENABLE_HTTPS_TLS13 "check https tls 1.3"
-	else
-		echo "installed curl version does not support TLS 1.3 . tests disabled."
-	fi
+	#echo
+	#if [ -n "$TLS13" ]; then
+	#	echo "TLS 1.3 uses encrypted ServerHello. DPI cannot check domain name in server response."
+	#	echo "This can allow more bypass strategies to work."
+	#	echo "What works for TLS 1.2 will also work for TLS 1.3 but not vice versa."
+	#	echo "Most sites nowadays support TLS 1.3 but not all. If you can't find a strategy for TLS 1.2 use this test."
+	#	echo "TLS 1.3 only strategy is better than nothing."
+	#	ask_yes_no_var ENABLE_HTTPS_TLS13 "check https tls 1.3"
+	#else
+	#	echo "installed curl version does not support TLS 1.3 . tests disabled."
+	#fi
 
 	ENABLE_HTTP3=0
-	echo
-	if [ -n "$HTTP3" ]; then
-		echo "make sure target domain(s) support QUIC or result will be negative in any case"
-		ENABLE_HTTP3=1
-		ask_yes_no_var ENABLE_HTTP3 "check http3 QUIC"
-	else
-		echo "installed curl version does not support http3 QUIC. tests disabled."
-	fi
+	#echo
+	#if [ -n "$HTTP3" ]; then
+	#	echo "make sure target domain(s) support QUIC or result will be negative in any case"
+	#	ENABLE_HTTP3=1
+	#	ask_yes_no_var ENABLE_HTTP3 "check http3 QUIC"
+	#else
+	#	echo "installed curl version does not support http3 QUIC. tests disabled."
+	#fi
 
 	IGNORE_CA=0
-	CURL_OPT=
-	[ $ENABLE_HTTPS_TLS13 = 1 -o $ENABLE_HTTPS_TLS12 = 1 ] && {
-		echo
-		echo "on limited systems like openwrt CA certificates might not be installed to preserve space"
-		echo "in such a case curl cannot verify server certificate and you should either install ca-bundle or disable verification"
-		echo "however disabling verification will break https check if ISP does MitM attack and substitutes server certificate"
-		ask_yes_no_var IGNORE_CA "do not verify server certificate"
-		[ "$IGNORE_CA" = 1 ] && CURL_OPT=-k
-	}
+	#CURL_OPT=
+	#[ $ENABLE_HTTPS_TLS13 = 1 -o $ENABLE_HTTPS_TLS12 = 1 ] && {
+	#	echo
+	#	echo "on limited systems like openwrt CA certificates might not be installed to preserve space"
+	#	echo "in such a case curl cannot verify server certificate and you should either install ca-bundle or disable verification"
+	#	echo "however disabling verification will break https check if ISP does MitM attack and substitutes server certificate"
+	#	ask_yes_no_var IGNORE_CA "do not verify server certificate"
+	#	[ "$IGNORE_CA" = 1 ] && CURL_OPT=-k
+	#}
 
 	echo
 	echo "sometimes ISPs use multiple DPIs or load balancing. bypass strategies may work unstable."
-	printf "how many times to repeat each test (default: 1) : "
+	printf "how many times to repeat each test (default: 7) : "
 	read REPEATS
-	REPEATS=$((0+${REPEATS:-1}))
+	REPEATS=$((0+${REPEATS:-7}))
 	[ "$REPEATS" = 0 ] && {
 		echo invalid repeat count
 		exitp 1
@@ -1571,10 +1588,10 @@ ask_params()
 	echo quick    - scan as fast as possible to reveal any working strategy
 	echo standard - do investigation what works on your DPI
 	echo force    - scan maximum despite of result
-	SCANLEVEL=${SCANLEVEL:-standard}
+	SCANLEVEL=${SCANLEVEL:-quick}
 	ask_list SCANLEVEL "quick standard force" "$SCANLEVEL"
 	# disable tpws checks by default in quick mode
-	[ "$SCANLEVEL" = quick -a -z "$SKIP_TPWS" ] && SKIP_TPWS=1
+	#[ "$SCANLEVEL" = quick -a -z "$SKIP_TPWS" ] && SKIP_TPWS=1
 
 	echo
 
